@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock, Paper, Scissors</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* A very light, clean background color */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #334155;
+            transition: background 0.5s ease;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            text-align: center;
+            width: 90%;
+            transition: all 0.3s ease;
+        }
+        .btn {
+            background-color: #6366f1;
+            color: #ffffff;
+            font-weight: bold;
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 0.5rem;
+            border: none;
+        }
+        .btn:hover {
+            background-color: #4338ca;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+        .choices {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .choice-btn {
+            background-color: #e2e8f0;
+            border-radius: 1rem;
+            padding: 1rem;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            text-transform: capitalize;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .choice-btn:hover {
+            background-color: #f0f4f8; /* Minimal color change on hover */
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+        }
+        .choice-btn span {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+        .score {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 1.5rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        .score-box {
+            background-color: #f1f5f9;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            min-width: 120px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="text-3xl font-bold mb-4">Rock, Paper, Scissors</h1>
+    <div class="score">
+        <div class="score-box">
+            <p>You</p>
+            <p id="user-score">0</p>
+        </div>
+        <div class="score-box">
+            <p>Computer</p>
+            <p id="computer-score">0</p>
+        </div>
+        <div class="score-box">
+            <p>Ties</p>
+            <p id="tie-score">0</p>
+        </div>
+    </div>
+    
+    <div class="text-xl my-6">
+        <p id="message">Choose your weapon!</p>
+    </div>
+
+    <div class="choices">
+        <button id="rock" class="choice-btn">
+            🪨
+            <span>Rock</span>
+        </button>
+        <button id="paper" class="choice-btn">
+            📄
+            <span>Paper</span>
+        </button>
+        <button id="scissors" class="choice-btn">
+            ✂️
+            <span>Scissors</span>
+        </button>
+    </div>
+
+    <button id="reset-btn" class="btn mt-8">Reset Scores</button>
+</div>
+
+<script>
+    const choices = ['rock', 'paper', 'scissors'];
+    let userScore = 0;
+    let computerScore = 0;
+    let tieScore = 0;
+
+    const userScoreDisplay = document.getElementById('user-score');
+    const computerScoreDisplay = document.getElementById('computer-score');
+    const tieScoreDisplay = document.getElementById('tie-score');
+    const messageDisplay = document.getElementById('message');
+    const choiceButtons = document.querySelectorAll('.choice-btn');
+    const resetButton = document.getElementById('reset-btn');
+
+    // Function to update the UI with scores and messages
+    function updateUI(userChoice, computerChoice, result) {
+        let userEmoji = '';
+        let computerEmoji = '';
+        if (userChoice === 'rock') userEmoji = '🪨';
+        if (userChoice === 'paper') userEmoji = '📄';
+        if (userChoice === 'scissors') userEmoji = '✂️';
+        if (computerChoice === 'rock') computerEmoji = '🪨';
+        if (computerChoice === 'paper') computerEmoji = '📄';
+        if (computerChoice === 'scissors') computerEmoji = '✂️';
+
+        messageDisplay.textContent = `You chose ${userEmoji}. The computer chose ${computerEmoji}. ${result}`;
+        userScoreDisplay.textContent = userScore;
+        computerScoreDisplay.textContent = computerScore;
+        tieScoreDisplay.textContent = tieScore;
+    }
+
+    // Function to determine the winner
+    function determineWinner(userChoice, computerChoice) {
+        if (userChoice === computerChoice) {
+            tieScore++;
+            return "It's a tie!";
+        } else if (
+            (userChoice === 'rock' && computerChoice === 'scissors') ||
+            (userChoice === 'paper' && computerChoice === 'rock') ||
+            (userChoice === 'scissors' && computerChoice === 'paper')
+        ) {
+            userScore++;
+            return "You win!";
+        } else {
+            computerScore++;
+            return "You lose!";
+        }
+    }
+
+    // Function to play a single round of the game
+    function playGame(userChoice) {
+        const computerChoice = choices[Math.floor(Math.random() * choices.length)];
+        const result = determineWinner(userChoice, computerChoice);
+        updateUI(userChoice, computerChoice, result);
+    }
+
+    // Add event listeners to the choice buttons
+    choiceButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            playGame(button.id);
+        });
+    });
+
+    // Add event listener for the reset button
+    resetButton.addEventListener('click', () => {
+        userScore = 0;
+        computerScore = 0;
+        tieScore = 0;
+        userScoreDisplay.textContent = userScore;
+        computerScoreDisplay.textContent = computerScore;
+        tieScoreDisplay.textContent = tieScore;
+        messageDisplay.textContent = "Scores have been reset. Choose your weapon!";
+    });
+</script>
+
+</body>
+</html>
